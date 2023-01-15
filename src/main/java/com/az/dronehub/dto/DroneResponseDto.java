@@ -7,7 +7,7 @@ import lombok.Value;
 
 @Value
 @Builder
-public class DroneRegisterResponseDto {
+public class DroneResponseDto {
     Long id;
 
     DroneModel model;
