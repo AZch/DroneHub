@@ -40,7 +40,7 @@ public class DroneLoadHandlerImpl implements DroneLoadHandler {
             throw new IncorrectPropertyException("battery", "more then 0", drone.getBatteryCapacity());
         }
 
-        int medicationWeightSum = medications.stream().map(MedicationLoadDto::getWeight).reduce(0, Integer::sum);
+        int medicationWeightSum = medications.stream().map(MedicationLoadDto::weight).reduce(0, Integer::sum);
         if (medicationWeightSum > drone.getWeightLimitGr()) {
             throw new IncorrectPropertyException("weight", "less then " + drone.getWeightLimitGr(), medicationWeightSum);
         }

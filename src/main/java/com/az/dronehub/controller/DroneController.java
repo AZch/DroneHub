@@ -4,14 +4,12 @@ import com.az.dronehub.dto.drone.DroneBatteryResponseDto;
 import com.az.dronehub.dto.drone.DroneRegisterRequestDto;
 import com.az.dronehub.dto.drone.DroneResponseDto;
 import com.az.dronehub.dto.medication.MedicationLoadDto;
-import com.az.dronehub.exceptions.EntityNotFoundException;
-import com.az.dronehub.exceptions.IncorrectPropertyException;
 import com.az.dronehub.handler.DroneLoadHandler;
 import com.az.dronehub.handler.DronePrepareHandler;
 import com.az.dronehub.handler.DroneStateHandler;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,7 +32,7 @@ public class DroneController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/register")
-    public DroneResponseDto register(@RequestBody DroneRegisterRequestDto body) {
+    public DroneResponseDto register(@Valid @RequestBody DroneRegisterRequestDto body) {
         return dronePrepareHandler.register(body);
     }
 
@@ -55,17 +53,5 @@ public class DroneController {
         @RequestBody List<MedicationLoadDto> medications
     ) {
         return droneLoadHandler.load(id, medications);
-    }
-
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(EntityNotFoundException.class)
-    public String entityNotFoundException(EntityNotFoundException e) {
-        return e.getMessage();
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(IncorrectPropertyException.class)
-    public String incorrectPropertyException(IncorrectPropertyException e) {
-        return e.getMessage();
     }
 }
