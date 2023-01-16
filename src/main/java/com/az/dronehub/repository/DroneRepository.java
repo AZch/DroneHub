@@ -12,8 +12,8 @@ public interface DroneRepository extends JpaRepository<DroneEntity, Long> {
 
     @Query("SELECT D FROM DroneEntity AS D " +
         "LEFT JOIN MedicationEntity AS M ON M.drone = D.id " +
-        "WHERE D.batteryCapacity > :batteryCapacity AND D.state = :state " +
+        "WHERE D.batteryCapacity > :batteryCapacity AND D.state IN (:states) " +
         "GROUP BY D.id " +
         "HAVING COUNT(M.id) = 0 OR D.weightLimitGr > SUM(M.weightGr)")
-    List<DroneEntity> findAllAvailable(@Param("batteryCapacity") int batteryCapacity, @Param("state") DroneState state);
+    List<DroneEntity> findAllAvailable(@Param("batteryCapacity") int batteryCapacity, @Param("states") List<DroneState> states);
 }

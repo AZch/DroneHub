@@ -5,18 +5,21 @@ import com.az.dronehub.dto.drone.DroneResponseDto;
 import com.az.dronehub.dto.medication.MedicationLoadDto;
 import com.az.dronehub.entity.DroneEntity;
 import com.az.dronehub.entity.MedicationEntity;
-import com.az.dronehub.exceptions.EntityNotFoundException;
-import com.az.dronehub.exceptions.IncorrectPropertyException;
 import com.az.dronehub.handler.DroneLoadHandler;
 import com.az.dronehub.mapper.DroneMapper;
 import com.az.dronehub.mapper.MedicationMapper;
 import com.az.dronehub.repository.DroneRepository;
 import com.az.dronehub.repository.MedicationRepository;
+import com.az.dronehub.service.DroneValidationService;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
+
+import static java.lang.Thread.sleep;
 
 @Service
 @RequiredArgsConstructor
@@ -27,45 +30,35 @@ public class DroneLoadHandlerImpl implements DroneLoadHandler {
     private final MedicationRepository medicationRepository;
     private final MedicationMapper medicationMapper;
 
+    private final DroneValidationService droneValidationService;
+
+    private final Random random = new Random();
+
+    @SneakyThrows
     @Override
     public DroneResponseDto loadDroneWithMedications(Long droneId, List<MedicationLoadDto> medications) {
         Optional<DroneEntity> entity = droneRepository.findById(droneId);
-        if (entity.isEmpty()) {
-            throw new EntityNotFoundException("Drone", "id", String.valueOf(droneId));
-        }
 
-        DroneEntity drone = entity.get();
+        DroneEntity drone = droneValidationService.getValidDroneEntityById(droneId, entity);
 
-        validateState(drone);
-        validateBattery(drone);
-        validateWeight(drone, medications);
+        droneValidationService.validateState(drone);
+        droneValidationService.validateBattery(drone);
+        droneValidationService.validateWeight(drone, medications);
+
+        drone.setState(DroneState.LOADING);
+        droneRepository.save(drone);
+
+        // simulating drone loading
+        sleep(random.nextInt(10) * 1000);
 
         List<MedicationEntity> medicationEntities = medications.stream()
             .map(medicationMapper::toEntity)
             .peek(drone::addMedication)
             .toList();
+        drone.setState(DroneState.LOADED);
+
         medicationRepository.saveAll(medicationEntities);
-        DroneEntity updatedDrone = droneRepository.saveAndFlush(drone);
+        DroneEntity updatedDrone = droneRepository.save(drone);
         return droneMapper.toDto(updatedDrone);
-    }
-
-    private void validateBattery(DroneEntity drone) {
-        if (drone.getBatteryCapacity() < 25) {
-            throw new IncorrectPropertyException("battery", "more then 25", drone.getBatteryCapacity());
-        }
-    }
-
-    private void validateState(DroneEntity drone) {
-        if (!drone.getState().equals(DroneState.IDLE)) {
-            throw new IncorrectPropertyException("state", DroneState.IDLE.getState(), drone.getState().getState());
-        }
-    }
-
-    private void validateWeight(DroneEntity drone, List<MedicationLoadDto> medications) {
-        int medicationWeightSum = medications.stream().map(MedicationLoadDto::weightGr).reduce(0, Integer::sum);
-        int alreadyLoadedWeightSum = drone.getMedications().stream().map(MedicationEntity::getWeightGr).reduce(0, Integer::sum);
-        if (medicationWeightSum > drone.getWeightLimitGr() - alreadyLoadedWeightSum) {
-            throw new IncorrectPropertyException("weight", "less then " + drone.getWeightLimitGr(), medicationWeightSum);
-        }
     }
 }
