@@ -50,8 +50,8 @@ public class DroneLoadHandlerImpl implements DroneLoadHandler {
     }
 
     private void validateBattery(DroneEntity drone) {
-        if (drone.getBatteryCapacity() == 0) {
-            throw new IncorrectPropertyException("battery", "more then 0", drone.getBatteryCapacity());
+        if (drone.getBatteryCapacity() < 25) {
+            throw new IncorrectPropertyException("battery", "more then 25", drone.getBatteryCapacity());
         }
     }
 

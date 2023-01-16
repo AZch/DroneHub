@@ -1,5 +1,6 @@
 package com.az.dronehub.controller;
 
+import com.az.dronehub.dto.error.ErrorResponse;
 import com.az.dronehub.dto.error.ValidationErrorResponse;
 import com.az.dronehub.dto.error.Violation;
 import com.az.dronehub.exceptions.EntityNotFoundException;
@@ -19,14 +20,14 @@ public class ErrorHandlerControllerAdvice {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(EntityNotFoundException.class)
-    public String entityNotFoundException(EntityNotFoundException e) {
-        return e.getMessage();
+    public ErrorResponse entityNotFoundException(EntityNotFoundException e) {
+        return new ErrorResponse(e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IncorrectPropertyException.class)
-    public String incorrectPropertyException(IncorrectPropertyException e) {
-        return e.getMessage();
+    public ErrorResponse incorrectPropertyException(IncorrectPropertyException e) {
+        return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler(ConstraintViolationException.class)

@@ -33,7 +33,17 @@ public class DroneStateHandlerImpl implements DroneStateHandler {
 
     @Override
     public List<DroneResponseDto> getAvailableDrones() {
-        List<DroneEntity> entities = droneRepository.findAllByState(DroneState.IDLE);
+        List<DroneEntity> entities = droneRepository.findAllAvailable(25, DroneState.IDLE);
         return entities.stream().map(droneMapper::toDto).toList();
+    }
+
+    @Override
+    public DroneResponseDto getDrone(Long id) {
+        Optional<DroneEntity> entity = droneRepository.findById(id);
+        if (entity.isEmpty()) {
+            throw new EntityNotFoundException("Drone", "id", String.valueOf(id));
+        }
+
+        return droneMapper.toDto(entity.get());
     }
 }

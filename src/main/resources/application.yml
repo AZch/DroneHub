@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:mydb
+    url: jdbc:h2:mem:mydb;TRACE_LEVEL_FILE=4;TRACE_LEVEL_SYSTEM_OUT=3
     username: move-me-to-env
     password: move-me-to-env
     driverClassName: org.h2.Driver

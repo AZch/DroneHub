@@ -36,6 +36,11 @@ public class DroneController {
         return dronePrepareHandler.register(body);
     }
 
+    @GetMapping("/{id}")
+    public DroneResponseDto getDroneState(@PathVariable("id") Long id) {
+        return droneStateHandler.getDrone(id);
+    }
+
     @GetMapping("/battery/{id}")
     public DroneBatteryResponseDto batteryStatus(@PathVariable("id") Long id) {
         return droneStateHandler.getBatteryLevel(id);
