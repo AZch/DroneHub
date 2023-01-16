@@ -32,7 +32,7 @@ public class DroneController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/register")
-    public DroneResponseDto register(@Valid @RequestBody DroneRegisterRequestDto body) {
+    public DroneResponseDto register(@RequestBody @Valid DroneRegisterRequestDto body) {
         return dronePrepareHandler.register(body);
     }
 
@@ -50,8 +50,8 @@ public class DroneController {
     @PutMapping("/load/{id}")
     public DroneResponseDto loadMedications(
         @PathVariable("id") Long id,
-        @RequestBody List<MedicationLoadDto> medications
+        @RequestBody @Valid List<MedicationLoadDto> medications
     ) {
-        return droneLoadHandler.load(id, medications);
+        return droneLoadHandler.loadDroneWithMedications(id, medications);
     }
 }

@@ -28,8 +28,8 @@ public class MedicationEntity {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "weight")
-    private String weight;
+    @Column(name = "weight_gr")
+    private int weightGr;
 
     @Column(name = "code")
     private String code;
