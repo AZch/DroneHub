@@ -21,7 +21,7 @@ public class DronePrepareHandlerImpl implements DronePrepareHandler {
     public DroneResponseDto register(DroneRegisterRequestDto dto) {
         DroneEntity entity = droneMapper.toEntity(dto);
         entity.setState(DroneState.IDLE);
-        entity.setBatteryCapacity(20);
+        entity.setBatteryCapacity(0);
         DroneEntity createdEntity = droneRepository.save(entity);
         return droneMapper.toDto(createdEntity);
     }
