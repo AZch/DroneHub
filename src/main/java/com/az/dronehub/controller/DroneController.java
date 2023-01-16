@@ -1,45 +1,71 @@
 package com.az.dronehub.controller;
 
-import com.az.dronehub.dto.DroneBatteryResponseDto;
-import com.az.dronehub.dto.DroneRegisterRequestDto;
-import com.az.dronehub.dto.DroneResponseDto;
-import com.az.dronehub.handler.DroneHandler;
-import com.az.dronehub.mapper.DroneMapper;
+import com.az.dronehub.dto.drone.DroneBatteryResponseDto;
+import com.az.dronehub.dto.drone.DroneRegisterRequestDto;
+import com.az.dronehub.dto.drone.DroneResponseDto;
+import com.az.dronehub.dto.medication.MedicationLoadDto;
+import com.az.dronehub.exceptions.EntityNotFoundException;
+import com.az.dronehub.exceptions.IncorrectPropertyException;
+import com.az.dronehub.handler.DroneLoadHandler;
+import com.az.dronehub.handler.DronePrepareHandler;
+import com.az.dronehub.handler.DroneStateHandler;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/drone")
 @RequiredArgsConstructor
 public class DroneController {
 
-    private final DroneHandler droneHandler;
-    private final DroneMapper mapper;
+    private final DronePrepareHandler dronePrepareHandler;
+    private final DroneStateHandler droneStateHandler;
+    private final DroneLoadHandler droneLoadHandler;
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/register")
     public DroneResponseDto register(@RequestBody DroneRegisterRequestDto body) {
-        return droneHandler.register(body);
+        return dronePrepareHandler.register(body);
     }
 
     @GetMapping("/battery/{id}")
-    public DroneBatteryResponseDto batteryStatus(@PathVariable("id") Long id) throws Exception {
-        Optional<DroneBatteryResponseDto> dto = droneHandler.getBatteryLevel(id);
-        if (dto.isEmpty()) {
-            throw new Exception("Not found");
-        }
-        return dto.get();
+    public DroneBatteryResponseDto batteryStatus(@PathVariable("id") Long id) {
+        return droneStateHandler.getBatteryLevel(id);
     }
 
     @GetMapping("/available")
     public List<DroneResponseDto> getAvailableDrones() {
-        return droneHandler.getAvailableDrones();
+        return droneStateHandler.getAvailableDrones();
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PutMapping("/load/{id}")
+    public DroneResponseDto loadMedications(
+        @PathVariable("id") Long id,
+        @RequestBody List<MedicationLoadDto> medications
+    ) {
+        return droneLoadHandler.load(id, medications);
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(EntityNotFoundException.class)
+    public String entityNotFoundException(EntityNotFoundException e) {
+        return e.getMessage();
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IncorrectPropertyException.class)
+    public String incorrectPropertyException(IncorrectPropertyException e) {
+        return e.getMessage();
     }
 }
