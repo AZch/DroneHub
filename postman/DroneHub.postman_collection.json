@@ -1,0 +1,206 @@
+{
+	"info": {
+		"_postman_id": "d905ed09-e8f1-43df-8c9a-258357268906",
+		"name": "DroneHub",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20744712"
+	},
+	"item": [
+		{
+			"name": "Delivery",
+			"item": [
+				{
+					"name": "Load",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"medications\": [\n        {\n            \"code\": \"ASDA123_-\",\n            \"name\": \"sdfsAD-_342\",\n            \"weightGr\": 323\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api}}/{{delivery}}/load/{{droneId}}",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"{{delivery}}",
+								"load",
+								"{{droneId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Send",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{api}}/{{delivery}}/send/{{droneId}}",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"{{delivery}}",
+								"send",
+								"{{droneId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delivered",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{api}}/{{delivery}}/send/{{droneId}}",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"{{delivery}}",
+								"send",
+								"{{droneId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Returning",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{api}}/{{delivery}}/returning/{{droneId}}",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"{{delivery}}",
+								"returning",
+								"{{droneId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Returned",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{api}}/{{delivery}}/returned/{{droneId}}",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"{{delivery}}",
+								"returned",
+								"{{droneId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Base",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"serialNumber\": \"asf\",\n    \"model\": \"MIDDLEWEIGHT\",\n    \"weightLimitGr\": 500\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api}}/{{drone}}/register",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"{{drone}}",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Review",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api}}/{{drone}}/{{droneId}}",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"{{drone}}",
+								"{{droneId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Battery",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api}}/{{drone}}/battery/{{droneId}}",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"{{drone}}",
+								"battery",
+								"{{droneId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Availability",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api}}/{{drone}}/available",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"{{drone}}",
+								"available"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

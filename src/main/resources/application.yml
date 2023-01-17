@@ -7,10 +7,8 @@ drone-hub:
 spring:
   datasource:
     url: jdbc:h2:mem:mydb
-    username: move-me-to-env
-    password: move-me-to-env
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
     driverClassName: org.h2.Driver
   jpa:
     spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
-  h2:
-    console.enabled: true
