@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,21 +31,25 @@ public class DroneController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/register")
+    @ResponseBody
     public DroneResponseDto register(@RequestBody @Valid DroneRegisterRequestDto body) {
         return dronePrepareHandler.register(body);
     }
 
     @GetMapping("/{id}")
+    @ResponseBody
     public DroneResponseDto getDroneState(@PathVariable("id") Long id) {
         return droneStateHandler.getDrone(id);
     }
 
     @GetMapping("/battery/{id}")
+    @ResponseBody
     public DroneBatteryResponseDto batteryStatus(@PathVariable("id") Long id) {
         return droneStateHandler.getBatteryLevel(id);
     }
 
     @GetMapping("/available")
+    @ResponseBody
     public List<DroneResponseDto> getAvailableDrones() {
         return droneStateHandler.getAvailableDrones();
     }

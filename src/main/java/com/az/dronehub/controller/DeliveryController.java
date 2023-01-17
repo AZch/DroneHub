@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,6 +25,7 @@ public class DeliveryController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PutMapping("/load/{id}")
+    @ResponseBody
     public DroneResponseDto loadMedications(
         @PathVariable("id") Long id,
         @RequestBody @Valid List<MedicationLoadDto> medications
@@ -32,23 +34,26 @@ public class DeliveryController {
     }
 
     @PutMapping("/send/{id}")
+    @ResponseBody
     public DroneResponseDto sendDroneDelivery(@PathVariable("id") Long id) {
         return droneDeliveryHandler.sendDroneDelivery(id);
     }
 
     @PutMapping("/delivered/{id}")
+    @ResponseBody
     public DroneResponseDto droneDelivered(@PathVariable("id") Long id) {
         return droneDeliveryHandler.droneDelivered(id);
     }
 
     @PutMapping("/returning/{id}")
+    @ResponseBody
     public DroneResponseDto droneReturning(@PathVariable("id") Long id) {
         return droneDeliveryHandler.droneReturning(id);
     }
 
     @PutMapping("/returned/{id}")
+    @ResponseBody
     public DroneResponseDto droneReturned(@PathVariable("id") Long id) {
         return droneDeliveryHandler.droneReturned(id);
     }
-
 }
