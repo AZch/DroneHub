@@ -37,14 +37,45 @@ public class DroneValidationService {
         }
     }
 
-    public void validateState(DroneEntity drone) {
-        if (!availabilityConfig.getAvailableStates().contains(drone.getState())) {
-            String availableStates = availabilityConfig.getAvailableStates().stream()
-                .map(DroneState::getState)
-                .collect(Collectors.joining(", "));
+    public void validateStateForLoading(DroneEntity drone) {
+        validateState(drone, availabilityConfig.getAvailableStates());
+    }
+
+    public void validateStateForDelivery(DroneEntity drone) {
+        if (!drone.getState().equals(DroneState.LOADED)) {
             throw new IncorrectPropertyException(
                 "state",
-                String.format("should be %s", availableStates),
+                String.format("should be %s", DroneState.LOADED),
+                drone.getState().getState()
+            );
+        }
+    }
+
+    public void validateStateForDelivered(DroneEntity drone) {
+        if (!drone.getState().equals(DroneState.LOADED)) {
+            throw new IncorrectPropertyException(
+                "state",
+                String.format("should be %s", DroneState.LOADED),
+                drone.getState().getState()
+            );
+        }
+    }
+
+    public void validateStateForReturn(DroneEntity drone) {
+        if (!drone.getState().equals(DroneState.LOADED)) {
+            throw new IncorrectPropertyException(
+                "state",
+                String.format("should be %s", DroneState.LOADED),
+                drone.getState().getState()
+            );
+        }
+    }
+
+    public void validateStateForReturning(DroneEntity drone) {
+        if (!drone.getState().equals(DroneState.LOADED)) {
+            throw new IncorrectPropertyException(
+                "state",
+                String.format("should be %s", DroneState.LOADED),
                 drone.getState().getState()
             );
         }
@@ -55,6 +86,19 @@ public class DroneValidationService {
         int alreadyLoadedWeightSum = drone.getMedications().stream().map(MedicationEntity::getWeightGr).reduce(0, Integer::sum);
         if (medicationWeightSum > drone.getWeightLimitGr() - alreadyLoadedWeightSum) {
             throw new IncorrectPropertyException("weight", "less then " + drone.getWeightLimitGr(), medicationWeightSum);
+        }
+    }
+
+    public void validateState(DroneEntity drone, List<DroneState> availableStates) {
+        if (!availableStates.contains(drone.getState())) {
+            String possibleStates = availableStates.stream()
+                .map(DroneState::getState)
+                .collect(Collectors.joining(", "));
+            throw new IncorrectPropertyException(
+                "state",
+                String.format("should be %s", possibleStates),
+                drone.getState().getState()
+            );
         }
     }
 }

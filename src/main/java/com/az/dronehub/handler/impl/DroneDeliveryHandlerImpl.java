@@ -5,7 +5,7 @@ import com.az.dronehub.dto.drone.DroneResponseDto;
 import com.az.dronehub.dto.medication.MedicationLoadDto;
 import com.az.dronehub.entity.DroneEntity;
 import com.az.dronehub.entity.MedicationEntity;
-import com.az.dronehub.handler.DroneLoadHandler;
+import com.az.dronehub.handler.DroneDeliveryHandler;
 import com.az.dronehub.mapper.DroneMapper;
 import com.az.dronehub.mapper.MedicationMapper;
 import com.az.dronehub.repository.DroneRepository;
@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -23,7 +24,7 @@ import static java.lang.Thread.sleep;
 
 @Service
 @RequiredArgsConstructor
-public class DroneLoadHandlerImpl implements DroneLoadHandler {
+public class DroneDeliveryHandlerImpl implements DroneDeliveryHandler {
 
     private final DroneRepository droneRepository;
     private final DroneMapper droneMapper;
@@ -41,7 +42,7 @@ public class DroneLoadHandlerImpl implements DroneLoadHandler {
 
         DroneEntity drone = droneValidationService.getValidDroneEntityById(droneId, entity);
 
-        droneValidationService.validateState(drone);
+        droneValidationService.validateStateForLoading(drone);
         droneValidationService.validateBattery(drone);
         droneValidationService.validateWeight(drone, medications);
 
@@ -60,5 +61,52 @@ public class DroneLoadHandlerImpl implements DroneLoadHandler {
         medicationRepository.saveAll(medicationEntities);
         DroneEntity updatedDrone = droneRepository.save(drone);
         return droneMapper.toDto(updatedDrone);
+    }
+
+    @Override
+    public DroneResponseDto sendDroneDelivery(Long id) {
+        return droneStateUpdate(id, DroneState.LOADED, DroneState.DELIVERING);
+    }
+
+    @Override
+    public DroneResponseDto droneDelivered(Long id) {
+        Optional<DroneEntity> entity = droneRepository.findById(id);
+        DroneEntity drone = droneValidationService.getValidDroneEntityById(id, entity);
+
+        droneValidationService.validateState(drone, List.of(DroneState.DELIVERING));
+
+        drone.setState(DroneState.DELIVERED);
+        drone.getMedications().clear();
+        droneRepository.save(drone);
+        return droneMapper.toDto(drone);
+    }
+
+    @Override
+    public DroneResponseDto droneReturning(Long id) {
+        return droneStateUpdate(id, DroneState.DELIVERED, DroneState.RETURNING);
+    }
+
+    @Override
+    public DroneResponseDto droneReturned(Long id) {
+        Optional<DroneEntity> entity = droneRepository.findById(id);
+        DroneEntity drone = droneValidationService.getValidDroneEntityById(id, entity);
+
+        droneValidationService.validateState(drone, List.of(DroneState.RETURNING));
+
+        drone.setState(DroneState.IDLE);
+        droneRepository.save(drone);
+        return droneMapper.toDto(drone);
+    }
+
+    private DroneResponseDto droneStateUpdate(Long id, DroneState availableState, DroneState nextState) {
+        Optional<DroneEntity> entity = droneRepository.findById(id);
+        DroneEntity drone = droneValidationService.getValidDroneEntityById(id, entity);
+
+        droneValidationService.validateBattery(drone);
+        droneValidationService.validateState(drone, List.of(availableState));
+
+        drone.setState(nextState);
+        droneRepository.save(drone);
+        return droneMapper.toDto(drone);
     }
 }

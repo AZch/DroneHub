@@ -11,4 +11,5 @@ public interface DroneStateHandler {
     List<DroneResponseDto> getAvailableDrones();
 
     DroneResponseDto getDrone(Long id);
+
 }

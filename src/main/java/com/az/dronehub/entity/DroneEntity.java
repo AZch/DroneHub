@@ -2,6 +2,7 @@ package com.az.dronehub.entity;
 
 import com.az.dronehub.constants.DroneModel;
 import com.az.dronehub.constants.DroneState;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -50,7 +51,8 @@ public class DroneEntity {
 
     // For simplest way i just use one to many relation,
     // but in real word we should define goods
-    @OneToMany(mappedBy = "drone")
+    @OneToMany(mappedBy = "drone", cascade =
+        CascadeType.ALL, orphanRemoval = true)
     private List<MedicationEntity> medications = new ArrayList<>();
 
     public void addMedication(MedicationEntity entity) {
