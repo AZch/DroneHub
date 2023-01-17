@@ -1,7 +1,7 @@
 package com.az.dronehub.controller;
 
 import com.az.dronehub.dto.drone.DroneResponseDto;
-import com.az.dronehub.dto.medication.MedicationLoadDto;
+import com.az.dronehub.dto.medication.MedicationsLoadRequestDto;
 import com.az.dronehub.handler.DroneDeliveryHandler;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/delivery")
@@ -28,9 +26,9 @@ public class DeliveryController {
     @ResponseBody
     public DroneResponseDto loadMedications(
         @PathVariable("id") Long id,
-        @RequestBody @Valid List<MedicationLoadDto> medications
+        @RequestBody @Valid MedicationsLoadRequestDto medications
     ) {
-        return droneDeliveryHandler.loadDroneWithMedications(id, medications);
+        return droneDeliveryHandler.loadDroneWithMedications(id, medications.medications());
     }
 
     @PutMapping("/send/{id}")
